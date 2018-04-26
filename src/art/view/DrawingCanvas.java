@@ -39,5 +39,61 @@ public class DrawingCanvas extends JPanel
 		ellipseList = new ArrayList<Ellipse2D>();
 		rectangleList = new ArrayList<Rectangle>();
 		
+		canvasImage = new BufferedImage(600, 600, BufferedImage.TYPE_INT_ARGB);
+		this.setMinimumSize(new Dimension(600, 600));
+		this.setPreferredSize(new Dimension(600, 600));
+		this.setMaximumSize(getPreferredSize());
+	}
+	
+	public void addShape(Shape current)
+	{
+		if (current instanceof Polygon)
+		{
+			if (((Polygon) current).xpoints.length ==3)
+			{
+				triangleList.add((Polygon) current);
+			}
+			else
+			{
+				polygonList.add((Polygon) current);
+			}
+		}
+		else if (current instanceof Ellipse2D)
+		{
+			elliposeList.add((Polygon)current);
+		}
+		
+	}
+	
+	public void clear()
+	{
+		
+	}
+	
+	public void changeBackground()
+	{
+		
+	}
+	
+	public void save()
+	{
+		
+	}
+	
+	private Color randomColor()
+	{
+		
+	}
+	
+	private void updateImage()
+	{
+		
+	}
+	
+	@Override
+	protected void paintComponent(Graphics graphics)
+	{
+		super.paintComponent(graphics);
+		graphics.drawImage(canvasImage, 0, 0, null);
 	}
 }

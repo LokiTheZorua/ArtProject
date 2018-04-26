@@ -26,7 +26,7 @@ public class ArtPanel extends JPanel
 	private ArtController app;
 	
 	private SpringLayout appLayout;
-	private DrawingCanvas canvus;
+	private DrawingCanvas canvas;
 	private JPanel buttonPanel;
 	private JPanel sliderPanel;
 	private JSlider scaleSlider;
@@ -53,13 +53,14 @@ public class ArtPanel extends JPanel
 		scaleSlider = new JSlider(MINIMUM_SCALE, MAXIMUM_SCALE);
 		edgeSlider = new JSlider(MINIMUM_EDGE, MAXIMUM_EDGE);
 		
-		canvas = new ShapeCanvas(app);
+		canvas = new DrawingCanvas(app);
 		sliderPanel = new JPanel();
 		buttonPanel = new JPanel(new GridLayout(0, 1));
 		
 		triangleButton = new JButton("add triangle");
 		rectangleButton = new JButton("add rectangle");
 		ellispeButton = new JButton("add ellispe");
+		polygonButton = new JButton("add polygon");	
 		clearButton = new JButton("clear image");
 		saveButton = new JButton("save image");
 		colorButton = new JButton("change color");
@@ -122,6 +123,71 @@ public class ArtPanel extends JPanel
 		this.add(sliderPanel);
 	}
 	
+	private boolean coinFlip()
+	{
+		return (int) (Math.random() * 2) == 0;
+	}
+	
+	private Polygon createPolygon(int sides)
+	{
+		Polygon currentShape = new Polygon();
+		
+		int originX = (int) (Math.random() * 600);
+		int originY = (int) (Math.random() * 600);
+		
+		for (int index = 0; index < sides; index++)
+		{
+			int minus = coinFlip() ? -1 : 1;
+			int shiftX = (int) (Math.random() * currentScale) * minus;
+			minus = coinFlip() ? -1: 1;
+			int shiftY = (int) (Math.random() * currentScale) * minus;
+			currentShape.addPoint(originX + shiftX, originY + shiftY);
+			
+		}
+		
+		return currentShape;
+	}
+	
+	private Rectangle createRectangle()
+	{
+		Rectangle currentRectangle;
+		
+		int cornerX = (int) (Math.random() * 600);
+		int cornerY = (int) (Math.random() * 600);
+		int width = (int) (Math.random() * currentScale) +1;
+		if (coinFlip())
+		{
+			currentRectangle = new Rectangle(cornerX, cornerY, width, width);
+		}
+		else
+		{
+			int height = (int)(Math.random() * currentScale) + 1;
+			currentRectangle = new Rectangle(cornerX, cornerY, width, height);
+		}
+		
+		return currentRectangle;
+	}
+	
+	
+	private Ellipse2D creatEllipse()
+	{
+		Ellipse2D ellipse = new Ellipse2D.Double();
+		
+		int cornerX = (int) (Math.random() * 600);
+		int cornerY = (int) (Math.random() * 600);
+		double width = Math.random() * currentScale + 1;
+		if (coinFlip())
+		{
+			ellipse.setFrame(cornerX, cornerY, width, width);
+		}
+		else
+		{
+			double height = Math.random() * currentScale + 1;
+			ellipse.setFrame(cornerX, cornerY, width, height);
+		}
+		return ellipse;
+	}
+	
 	private void setupLayout()
 	{
 		
@@ -129,6 +195,49 @@ public class ArtPanel extends JPanel
 	
 	private void setupListeners()
 	{
+		rectangleButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent click)
+			{
+				Rectangle rectangle = createRectangle();
+					canvas.addShape(rectangle);
+			}
+		});
+	
+		triangleButton.addActionListener(new ActionListener() 
+		{
+			public void actionPerformed(ActionEvent click)
+			{
+				Polygon polygon = createPolygon(3);
+				canvas.addShape(triangle);
+			}
+		});
 		
+		polygonButton.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent click)
+			{
+				Polygon polygon = createPolygon(currentEdgeCount);
+				canvas.addShape(polygon);
+			}
+		});
+		
+		clearButton.addActionListener(click -> canvas.clear());
+		
+		saveButton.addActionListener(click -> canvas.save());
+		
+		colorButton.addActionListener(click -> canvas.changeBackground());
+		
+		scaleSlider.addChangeListener(new ChangeListener()
+		{
+			@Override
+			public void stateChanged(ChangeEvent e)
+			{
+				if (!scaleSlider.getValueIsAdjusting())
+				{
+					currentScale = scaleSlider.getValue();
+				}
+			}
+		});
 	}
 }
